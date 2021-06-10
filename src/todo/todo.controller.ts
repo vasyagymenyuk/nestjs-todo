@@ -7,18 +7,12 @@ import {
   Param,
   Delete,
   Put,
-  HttpCode,
   Res,
-  Req,
-  Redirect,
-  Header,
-  HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Response } from 'express';
-import { identity } from 'rxjs';
 
 export interface todo {
   id: number;
@@ -45,25 +39,25 @@ export class TodoController {
   }
 
   @Get(':id')
-  getByUserId(@Param('id') id): todo {
-    return this.todoService.getByUserId(+id);
+  getByUserId(@Param('id', ParseIntPipe) id: number): todo {
+    return this.todoService.getByUserId(id);
   }
 
   @Put(':todoId')
-  execute(@Param('todoId') id): todo {
-    return this.todoService.execute(+id);
+  execute(@Param('todoId', ParseIntPipe) id: number): todo {
+    return this.todoService.execute(id);
   }
 
   @Patch(':todoId')
-  cancelById(@Param('todoID') id): todo {
-    return this.todoService.cancelById(+id);
+  cancelById(@Param('todoID', ParseIntPipe) id: number): todo {
+    return this.todoService.cancelById(id);
   }
 
   @Delete('delete/:todoId')
   removeById(
-    @Param('todoId') id,
+    @Param('todoId', ParseIntPipe) id: number,
     @Res({ passthrough: true }) res: Response,
-  ): any {
-    return this.todoService.removeByiD(+id, res);
+  ) {
+    return this.todoService.removeByiD(id, res);
   }
 }

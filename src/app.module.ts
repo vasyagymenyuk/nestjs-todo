@@ -1,15 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TodoController } from './todo/todo.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TodoEntity } from './todo/entities/todo.entity';
 import { TodoModule } from './todo/todo.module';
-import { TodoService } from './todo/todo.service';
-import { UserController } from './user/user.controller';
+import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
-import { UserService } from './user/user.service';
 
 @Module({
-  controllers: [AppController, TodoController, UserController],
-  providers: [AppService, TodoService, UserService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'postgres',
+      database: 'todo_nest',
+      entities: ['dist/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
+  ],
 })
 export class AppModule {}
