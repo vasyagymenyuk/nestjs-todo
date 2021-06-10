@@ -1,26 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class TodoService {
-  create(createTodoDto: CreateTodoDto) {
-    return 'This action adds a new todo';
+  create(createTodoDto: CreateTodoDto, res: Response) {
+    res.status(HttpStatus.CREATED).send({ success: true, data: createTodoDto });
   }
 
-  findAll() {
-    return `This action returns all todo`;
+  findAll(res) {
+    return res.send([
+      {
+        id: 1,
+        title: 'Make TestApp',
+        isDone: false,
+      },
+      {
+        id: 2,
+        title: 'Run TestApp',
+        isDone: true,
+      },
+    ]);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} todo`;
+  getByUserId(id: number) {
+    return {
+      id,
+      title: 'Run TestApp',
+      isDone: true,
+    };
   }
 
-  update(id: number, updateTodoDto: UpdateTodoDto) {
-    return `This action updates a #${id} todo`;
+  cancelById(id: number) {
+    return {
+      id: 2,
+      title: 'Run TestApp',
+      isDone: false,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} todo`;
+  execute(id: number) {
+    return {
+      id,
+      title: 'Run TestApp',
+      isDone: true,
+    };
+  }
+
+  removeByiD(id: number, res: Response) {
+    res
+      .status(HttpStatus.OK)
+      .send({ message: `todo with id: ${id} removed` })
+      .end();
   }
 }

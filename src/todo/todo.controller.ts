@@ -8,12 +8,19 @@ import {
   Delete,
   Put,
   HttpCode,
+  Res,
+  Req,
+  Redirect,
+  Header,
+  HttpStatus,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
+import { Response } from 'express';
+import { identity } from 'rxjs';
 
-interface todo {
+export interface todo {
   id: number;
   title: string;
   content?: string;
@@ -22,57 +29,41 @@ interface todo {
 
 @Controller('todo')
 export class TodoController {
+  constructor(private todoService: TodoService) {}
+
   @Post()
-  create() {
-    return '200 Todo created';
+  create(
+    @Body() createToDoDto: CreateTodoDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.todoService.create(createToDoDto, res);
   }
 
   @Get()
-  findAll(): Array<todo> {
-    return [
-      {
-        id: 1,
-        title: 'Make TestApp',
-        isDone: false,
-      },
-      {
-        id: 2,
-        title: 'Run TestApp',
-        isDone: true,
-      },
-    ];
+  findAll(@Res() res): todo[] {
+    return this.todoService.findAll(res);
   }
 
   @Get(':id')
-  getByUserId(): todo {
-    return {
-      id: 2,
-      title: 'Run TestApp',
-      isDone: true,
-    };
+  getByUserId(@Param('id') id): todo {
+    return this.todoService.getByUserId(+id);
   }
 
   @Put(':todoId')
-  execute(): todo {
-    return {
-      id: 2,
-      title: 'Run TestApp',
-      isDone: true,
-    };
+  execute(@Param('todoId') id): todo {
+    return this.todoService.execute(+id);
   }
 
   @Patch(':todoId')
-  cancelById(): todo {
-    return {
-      id: 2,
-      title: 'Run TestApp',
-      isDone: false,
-    };
+  cancelById(@Param('todoID') id): todo {
+    return this.todoService.cancelById(+id);
   }
 
-  @HttpCode(204)
-  @Delete(':todoId')
-  removeById(): any {
-    return 'Todo deleted';
+  @Delete('delete/:todoId')
+  removeById(
+    @Param('todoId') id,
+    @Res({ passthrough: true }) res: Response,
+  ): any {
+    return this.todoService.removeByiD(+id, res);
   }
 }
