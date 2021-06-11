@@ -11,7 +11,9 @@ export class TodoEntity extends BaseEntity {
   @IsString()
   title: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   @IsString()
   content?: string;
 

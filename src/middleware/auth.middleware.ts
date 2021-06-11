@@ -5,6 +5,6 @@ export function authMiddleware(
   res: Response,
   next: NextFunction,
 ) {
-  console.log(`Request...`);
+  console.log(`Auth middleware`);
   next();
 }

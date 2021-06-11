@@ -2,7 +2,7 @@ import { IsBoolean, IsEmail, IsInt, IsString } from 'class-validator';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('user')
-export class User extends BaseEntity {
+export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   @IsInt()
   id: number;
@@ -15,7 +15,9 @@ export class User extends BaseEntity {
   @IsString()
   lastName?: string;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   @IsString()
   @IsEmail()
   email: string;

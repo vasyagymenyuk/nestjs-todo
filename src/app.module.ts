@@ -17,6 +17,8 @@ import { UserModule } from './user/user.module';
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+    UserModule,
+    TodoModule,
   ],
 })
 export class AppModule {}

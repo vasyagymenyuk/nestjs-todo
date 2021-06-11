@@ -1,26 +1,29 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { Response } from 'express';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { TodoEntity } from './entities/todo.entity';
+import { validateOrReject } from 'class-validator';
+import { classToPlain } from 'class-transformer';
 
 @Injectable()
 export class TodoService {
-  create(createTodoDto: CreateTodoDto, res: Response) {
-    res.status(HttpStatus.CREATED).send({ success: true, data: createTodoDto });
+  constructor(
+    @InjectRepository(TodoEntity)
+    private todoRepository: Repository<TodoEntity>,
+  ) {}
+
+  async create(createTodoDto: CreateTodoDto) {
+    await validateOrReject(createTodoDto);
+
+    const todo = this.todoRepository.create(classToPlain(createTodoDto));
+
+    return await todo.save();
   }
 
-  findAll(res) {
-    return res.send([
-      {
-        id: 1,
-        title: 'Make TestApp',
-        isDone: false,
-      },
-      {
-        id: 2,
-        title: 'Run TestApp',
-        isDone: true,
-      },
-    ]);
+  findAll() {
+    return classToPlain(this.todoRepository.find());
   }
 
   getByUserId(id: number) {

@@ -4,6 +4,6 @@ import { Connection, createConnection } from 'typeorm';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  await app.listen(3000, () => console.log('Server listening on 3000...'));
 }
 bootstrap();

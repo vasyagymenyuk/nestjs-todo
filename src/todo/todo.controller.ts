@@ -26,16 +26,13 @@ export class TodoController {
   constructor(private todoService: TodoService) {}
 
   @Post()
-  create(
-    @Body() createToDoDto: CreateTodoDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    return this.todoService.create(createToDoDto, res);
+  create(@Body() createToDoDto: CreateTodoDto) {
+    return this.todoService.create(createToDoDto);
   }
 
   @Get()
-  findAll(@Res() res): todo[] {
-    return this.todoService.findAll(res);
+  findAll() {
+    return this.todoService.findAll();
   }
 
   @Get(':id')
