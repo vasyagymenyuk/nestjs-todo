@@ -1,12 +1,10 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoEntity } from './entities/todo.entity';
 import { validateOrReject } from 'class-validator';
-import { classToPlain } from 'class-transformer';
 import { ResponseTodoDto } from './dto/response-todo.dto';
-
 @Injectable()
 export class TodoService {
   constructor(

@@ -10,18 +10,10 @@ import {
   Res,
   ParseIntPipe,
 } from '@nestjs/common';
-import { TodoService } from './todo.service';
+import { TodoService } from './TodoService';
 import { CreateTodoDto } from './dto/create-todo.dto';
-import { Response } from 'express';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import { classToClass, classToPlain } from 'class-transformer';
-
-export interface ITodo {
-  id: string;
-  title: string;
-  content?: string;
-  isDone: boolean;
-}
+import { classToPlain } from 'class-transformer';
 
 @Controller('todo')
 export class TodoController {

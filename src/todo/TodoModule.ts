@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { TodoService } from './todo.service';
-import { TodoController } from './todo.controller';
+import { TodoService } from './TodoService';
+import { TodoController } from './TodoController';
 import { authMiddleware } from 'src/middleware/auth.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TodoEntity } from './entities/todo.entity';
@@ -9,6 +9,7 @@ import { TodoEntity } from './entities/todo.entity';
   imports: [TypeOrmModule.forFeature([TodoEntity])],
   controllers: [TodoController],
   providers: [TodoService],
+  exports: [TypeOrmModule],
 })
 export class TodoModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
