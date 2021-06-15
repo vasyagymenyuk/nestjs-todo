@@ -3,16 +3,16 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
   @IsInt()
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
   @IsString()
+  @Column()
   name: string;
 
-  @Column()
   @IsString()
+  @Column()
   lastName?: string;
 
   @Column({
@@ -22,13 +22,13 @@ export class UserEntity extends BaseEntity {
   @IsEmail()
   email: string;
 
-  @Column()
   @IsString()
+  @Column()
   password: string;
 
+  @IsBoolean()
   @Column({
     default: false,
   })
-  @IsBoolean()
   deleted: boolean;
 }

@@ -13,9 +13,11 @@ import {
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { Response } from 'express';
+import { UpdateTodoDto } from './dto/update-todo.dto';
+import { classToClass, classToPlain } from 'class-transformer';
 
-export interface todo {
-  id: number;
+export interface ITodo {
+  id: string;
   title: string;
   content?: string;
   isDone: boolean;
@@ -26,35 +28,32 @@ export class TodoController {
   constructor(private todoService: TodoService) {}
 
   @Post()
-  create(@Body() createToDoDto: CreateTodoDto) {
-    return this.todoService.create(createToDoDto);
+  async create(@Body() createToDoDto: CreateTodoDto): Promise<any> {
+    return await classToPlain(this.todoService.create(createToDoDto));
   }
 
   @Get()
-  findAll() {
-    return this.todoService.findAll();
+  async findAll(): Promise<any> {
+    return await classToPlain(this.todoService.findAll());
   }
 
-  @Get(':id')
-  getByUserId(@Param('id', ParseIntPipe) id: number): todo {
-    return this.todoService.getByUserId(id);
+  @Get('/:id')
+  async getByUserId(@Param('id') id: string): Promise<ITodo> {
+    return await this.todoService.getTodoByUserId(id);
   }
 
-  @Put(':todoId')
-  execute(@Param('todoId', ParseIntPipe) id: number): todo {
-    return this.todoService.execute(id);
+  @Put('/:todoId')
+  async applyTodo(@Param('todoId') id: string): Promise<UpdateTodoDto> {
+    return await this.todoService.applyTodo(id);
   }
 
-  @Patch(':todoId')
-  cancelById(@Param('todoID', ParseIntPipe) id: number): todo {
-    return this.todoService.cancelById(id);
+  @Patch('/:todoId')
+  async cancelTodo(@Param('todoID') id: string): Promise<UpdateTodoDto> {
+    return await this.todoService.cancelById(id);
   }
 
-  @Delete('delete/:todoId')
-  removeById(
-    @Param('todoId', ParseIntPipe) id: number,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    return this.todoService.removeByiD(id, res);
+  @Delete('/:todoId')
+  async removeTodoById(@Param('todoId') id: string) {
+    return this.todoService.removeByiD(id);
   }
 }

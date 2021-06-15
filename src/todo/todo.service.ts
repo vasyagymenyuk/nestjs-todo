@@ -1,11 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
-import { Response } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoEntity } from './entities/todo.entity';
 import { validateOrReject } from 'class-validator';
 import { classToPlain } from 'class-transformer';
+import { ResponseTodoDto } from './dto/response-todo.dto';
 
 @Injectable()
 export class TodoService {
@@ -14,19 +14,19 @@ export class TodoService {
     private todoRepository: Repository<TodoEntity>,
   ) {}
 
-  async create(createTodoDto: CreateTodoDto) {
+  async create(createTodoDto: CreateTodoDto): Promise<ResponseTodoDto> {
     await validateOrReject(createTodoDto);
 
-    const todo = this.todoRepository.create(classToPlain(createTodoDto));
+    const todo = this.todoRepository.create(createTodoDto);
 
     return await todo.save();
   }
 
-  findAll() {
-    return classToPlain(this.todoRepository.find());
+  async findAll(): Promise<TodoEntity[]> {
+    return await this.todoRepository.find();
   }
 
-  getByUserId(id: number) {
+  async getTodoByUserId(id: string) {
     return {
       id,
       title: 'Run TestApp',
@@ -34,7 +34,7 @@ export class TodoService {
     };
   }
 
-  cancelById(id: number) {
+  async cancelById(id: string) {
     return {
       id: 2,
       title: 'Run TestApp',
@@ -42,7 +42,7 @@ export class TodoService {
     };
   }
 
-  execute(id: number) {
+  async applyTodo(id: string) {
     return {
       id,
       title: 'Run TestApp',
@@ -50,10 +50,7 @@ export class TodoService {
     };
   }
 
-  removeByiD(id: number, res: Response) {
-    res
-      .status(HttpStatus.OK)
-      .send({ message: `todo with id: ${id} removed` })
-      .end();
+  async removeByiD(id: string): Promise<void> {
+    await this.todoRepository.delete(id);
   }
 }
