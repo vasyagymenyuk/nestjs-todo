@@ -1,8 +1,17 @@
-import { IsBoolean, IsInt, IsString } from 'class-validator';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IsBoolean, IsInt, IsString, IsUUID } from 'class-validator';
+import { UserEntity } from 'src/user/entities/user.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('todo')
-export class TodoEntity implements ITodo {
+export class TodoEntity /*implements ITodo*/ extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -21,4 +30,15 @@ export class TodoEntity implements ITodo {
     default: false,
   })
   isDone: boolean;
+
+  @IsBoolean()
+  @Column({
+    default: false,
+  })
+  isDeleted: boolean;
+
+  @ManyToOne((type) => UserEntity, (user) => user.id)
+  @JoinColumn({ name: 'user_id' })
+  @IsUUID()
+  user: string;
 }

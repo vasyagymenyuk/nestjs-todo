@@ -1,11 +1,18 @@
-import { IsBoolean, IsEmail, IsInt, IsString } from 'class-validator';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
+import { IsBoolean, IsEmail, IsInt, IsString, IsUUID } from 'class-validator';
+import { TodoEntity } from 'src/todo/entities/todo.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('user')
-export class UserEntity implements IUser {
-  @IsInt()
-  @PrimaryGeneratedColumn()
-  id: number;
+export class UserEntity /*implements IUser*/ extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @IsString()
   @Column()
@@ -15,14 +22,15 @@ export class UserEntity implements IUser {
   @Column()
   lastName: string;
 
+  @IsEmail()
+  @IsString()
   @Column({
     unique: true,
   })
-  @IsString()
-  @IsEmail()
   email: string;
 
   @IsString()
+  @Exclude()
   @Column()
   password: string;
 
@@ -31,4 +39,8 @@ export class UserEntity implements IUser {
     default: false,
   })
   deleted: boolean;
+
+  @OneToMany(() => TodoEntity, (todo) => todo.user)
+  @Exclude()
+  todos: TodoEntity[];
 }
