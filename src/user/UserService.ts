@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { classToPlain, plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
@@ -20,6 +26,17 @@ export class UserService {
     const createUserData = plainToClass(CreateUserDto, createUserDto);
     await validateOrReject(createUserData);
 
+    const isExistUser = await this.userRepository.findOne({
+      email: createUserDto.email,
+    });
+
+    if (isExistUser) {
+      throw new HttpException(
+        { message: 'Пользователь с таким E-mail уже зарегистрирован' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const salt = await bcrypt.genSalt(12);
     const encryptedPass = await bcrypt.hash(createUserData.password, salt);
 
@@ -30,8 +47,23 @@ export class UserService {
     return await user.save();
   }
 
-  async findOne(id: string, req: IReqWithUser) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string, req: IReqWithUser): Promise<UserEntity> {
+    console.log('COMPARE====', id, req.user.id);
+
+    if (id !== req.user.id) {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['todos'],
+    });
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return user;
   }
 
   findAll() {
