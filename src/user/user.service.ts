@@ -22,31 +22,6 @@ export class UserService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const createUserData = plainToClass(CreateUserDto, createUserDto);
-    await validateOrReject(createUserData);
-
-    const isExistUser = await this.userRepository.findOne({
-      email: createUserDto.email,
-    });
-
-    if (isExistUser) {
-      throw new HttpException(
-        { message: 'Пользователь с таким E-mail уже зарегистрирован' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const salt = await bcrypt.genSalt(12);
-    const encryptedPass = await bcrypt.hash(createUserData.password, salt);
-
-    createUserData.password = encryptedPass;
-
-    const user = this.userRepository.create(classToPlain(createUserData));
-
-    return await user.save();
-  }
-
   async findOne(id: string, req: IReqWithUser): Promise<UserEntity> {
     console.log('COMPARE====', id, req.user.id);
 
@@ -66,12 +41,14 @@ export class UserService {
     return user;
   }
 
-  findAll() {
-    return classToPlain(this.userRepository.find());
+  async findAll() {
+    return classToPlain(await this.userRepository.find());
   }
 
-  async findUserByEmail(email: string, req: IReqWithUser) {
-    return await this.userRepository.findOne({ where: { email } });
+  async findUserByEmail(email: string) {
+    const candidate = await this.userRepository.findOne({ where: { email } });
+
+    return candidate;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto, req: IReqWithUser) {

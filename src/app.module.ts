@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TodoModule } from './todo/TodoModule';
-import { UserModule } from './user/UserModule';
+import { TodoModule } from './todo/todo.module';
+import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.${process.env.APP_ENV}.env`,
+      envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -23,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     TodoModule,
     AuthModule,
+    RoleModule,
   ],
 })
 export class AppModule {}
